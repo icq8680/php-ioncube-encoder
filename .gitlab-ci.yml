@@ -1,0 +1,42 @@
+stages:
+  - build
+  - test
+
+workflow:
+  rules:
+    - when: always
+
+default:
+  services:
+    - docker:dind
+
+Build Image:
+  image: docker:latest
+  stage: build
+  script:
+    - echo "${CI_REGISTRY_PASSWORD}" | docker login --password-stdin -u "${CI_REGISTRY_USER}" "${CI_REGISTRY}"
+    - docker build --build-arg IONCUBE_PATH=${IONCUBE_ENCODER_DEMO_URL} -t ${CI_REGISTRY_IMAGE} -f Dockerfile scripts
+    - docker push ${CI_REGISTRY_IMAGE}
+  only:
+    changes:
+      - Dockerfile
+      - .gitlab-ci.yml
+      - scripts/*
+  except:
+    refs:
+      - tags
+
+Test Encoder:
+  image: ${CI_REGISTRY_IMAGE}
+  stage: test
+  variables:
+    DEMO_PATH: result.php
+  script:
+    - /opt/ioncube/ioncube_encoder.sh -C -72 /opt/demo.php -o ${DEMO_PATH}
+  artifacts:
+    name: Demo result
+    paths:
+      - ${DEMO_PATH}
+  except:
+    refs:
+      - tags
