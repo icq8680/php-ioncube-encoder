@@ -1,3 +1,3 @@
 # PHP ionCube Encoder
 
-Not affiliated with ionCube Ltd.
+For testing purposes. Not affiliated with ionCube Ltd.
