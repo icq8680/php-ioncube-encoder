@@ -23,7 +23,15 @@ jobs:
           if [ $TAG != 'latest' ]; then
             TAG=$(echo $TAG | tr [:upper:] [:lower:] | tr '/_' '-')
           fi
-      - run: "docker build --build-arg IONCUBE_PATH=${IONCUBE_ENCODER_DEMO_URL} -t php-ioncube-encoder:$TAG -f Dockerfile scripts"
+      - run: docker build --build-arg IONCUBE_PATH=${IONCUBE_ENCODER_DEMO_URL} -t ${IMAGE}:${TAG} -f Dockerfile scripts
+      - when:
+          condition:
+            not:
+              equal: [ 'main', << pipeline.git.branch >> ]
+          steps:
+            - run: |
+                echo $DOCKER_TOKEN | docker login -u $DOCKER_LOGIN --password-stdin
+                docker push ${IMAGE}:${TAG}
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
