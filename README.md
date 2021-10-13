@@ -1,5 +1,8 @@
 # PHP ionCube Encoder
-    Small docker image for PHP sources encryption.
+
+[![CircleCI](https://circleci.com/gh/icq8680/php-ioncube-encoder/tree/circleci-project-setup.svg?style=shield)](https://circleci.com/gh/icq8680/php-ioncube-encoder/tree/circleci-project-setup)
+
+Small docker image for PHP sources encryption.
 
 ## Disclaimer
 
