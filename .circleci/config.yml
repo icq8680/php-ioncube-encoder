@@ -14,18 +14,19 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout
-      - run:
-          name: Install Docker client
-          command: apk add docker-cli
+      - run: "apk add docker-cli"
       - setup_remote_docker:
           version: 19.03.13
-      - run:
-          name: "Build Image"
-          command: "docker build --build-arg IONCUBE_PATH=${IONCUBE_ENCODER_DEMO_URL} -t php-ioncube-encoder:latest -f Dockerfile scripts"
+      - run: |
+          TAG="<< pipeline.git.branch >>"
+          if [ $TAG != 'latest' ]; then
+            $TAG=$(echo $TAG | tr [:upper:] [:lower:] | tr '/_' '-')
+          fi
+          docker build --build-arg IONCUBE_PATH=${IONCUBE_ENCODER_DEMO_URL} -t php-ioncube-encoder:$TAG -f Dockerfile scripts
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  build-workflow:
+  build:
     jobs:
       - build
