@@ -10,6 +10,8 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
     docker:
       - image: alpine:3.14
+    environment:
+      TAG: << pipeline.git.branch >>
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
@@ -18,11 +20,10 @@ jobs:
       - setup_remote_docker:
           version: 19.03.13
       - run: |
-          TAG="<< pipeline.git.branch >>"
           if [ $TAG != 'latest' ]; then
-            $TAG=$(echo $TAG | tr [:upper:] [:lower:] | tr '/_' '-')
+            TAG=$(echo $TAG | tr [:upper:] [:lower:] | tr '/_' '-')
           fi
-          docker build --build-arg IONCUBE_PATH=${IONCUBE_ENCODER_DEMO_URL} -t php-ioncube-encoder:$TAG -f Dockerfile scripts
+      - run: "docker build --build-arg IONCUBE_PATH=${IONCUBE_ENCODER_DEMO_URL} -t php-ioncube-encoder:$TAG -f Dockerfile scripts"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
